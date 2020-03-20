@@ -1,7 +1,7 @@
 [package]
 name = "subnet-calculator"
 description = "A CLI tool to simply and fastly calculate subnetwork."
-version = "0.1.1"
+version = "1.0.0"
 authors = ["Léo Huteau <huteau890@gmail.com>"]
 edition = "2018"
 repository = "https://github.com/ZeProf10T/Subnet-calculator"
