@@ -164,7 +164,7 @@ fn subnet_calc(network: &Ipv4Addr, mask: &Ipv4Addr, subnet_mask: &Ipv4Addr) -> V
 fn main() {
     let matches = App::new("Subnet calculator")
         .version("0.1.0")
-        .author("Léo Huteau <contact@huteau-leo.fr>")
+        .author("Léo Huteau <huteau890@gmail.com>")
         .about("A basic subnet calculator")
         .arg(Arg::with_name("IP Address")
             .required(true)
