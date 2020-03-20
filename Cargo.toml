@@ -1,9 +1,11 @@
 [package]
-name = "reseau"
-version = "0.1.0"
+name = "subnet-calculator"
+description = "A CLI tool to simply and fastly calculate subnetwork."
+version = "0.1.1"
 authors = ["Léo Huteau <huteau890@gmail.com>"]
 edition = "2018"
-
+repository = "https://github.com/ZeProf10T/Subnet-calculator"
+keywords = ["network","tool","cli"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
