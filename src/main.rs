@@ -237,8 +237,7 @@ fn main() {
     println!("\tBroadcast : {:#?}", broadcast);
     println!("\tMask : {:#?}", mask);
     println!("\tWilcard : {:#?}", wildcard);
-
-
+    
     println!("\tAvailable  : {} - {}", first, last);
     println!("\tFree Hosts : {}", hosts);
 
