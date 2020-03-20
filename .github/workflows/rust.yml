@@ -1,26 +1,51 @@
-name: Rust
+name: Publish
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    tags:
+      - '*'
 
 jobs:
-  build_linux:
+  publish:
+    name: Publish for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        name: [
+          linux,
+          windows,
+          macos
+        ]
 
-    runs-on: ubuntu-latest
+        include:
+          - name: linux
+            os: ubuntu-latest
+            artifact_name: <name>
+            asset_name: <name>-linux
+          - name: windows
+            os: windows-latest
+            artifact_name: <name>.exe
+            asset_name: <name>-windows
+          - name: macos
+            os: macos-latest
+            artifact_name: <name>
+            asset_name: <name>-macos
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Build
-      run: cargo build --verbose
+      - uses: actions/checkout@v1
 
-  build_windows:
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
 
-    runs-on: windows-latest
+      - name: Build
+        run: cargo build --release --locked
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build
-      run: cargo build --verbose
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/release/${{ matrix.artifact_name }}
+          asset_name: ${{ matrix.asset_name }}
+          tag: ${{ github.ref }}
