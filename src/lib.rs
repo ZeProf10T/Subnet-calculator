@@ -1,2 +1,2 @@
-pub mod IPv4;
-pub mod IPv6;
+pub mod ipv4;
+pub mod ipv6;

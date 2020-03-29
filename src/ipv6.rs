@@ -123,7 +123,7 @@ pub mod subnet {
 
         }
 
-        let mut x: [u16; 8]= [res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7]];
+        let x: [u16; 8]= [res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7]];
 
         let subnet_wildcard = subnet_wildcard.octets();
         let mut res = Vec::new();
@@ -138,7 +138,7 @@ pub mod subnet {
 
         }
 
-        let mut y: [u16; 8]= [res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7]];
+        let y: [u16; 8]= [res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7]];
 
         let wildcard = utils::vec_to_num(x);
         let subnet_wildcard = utils::vec_to_num(y);
@@ -166,7 +166,7 @@ pub mod subnet {
 
         }
 
-        let mut x: [u16; 8]= [res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7]];
+        let x: [u16; 8]= [res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7]];
 
         let mut sub_network = utils::vec_to_num(x);
 
@@ -217,7 +217,7 @@ pub mod utils {
 
         }
 
-        let mut a: [u16; 8]= [res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7]];
+        let a: [u16; 8]= [res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7]];
         let mut mask = vec_to_num(a);
 
         let mut count = 0;
@@ -239,7 +239,7 @@ pub mod utils {
         let e: u128 = (vec[4] as u128 * 65536 * 65536 * 65536) as u128;
         let f: u128 = (vec[5] as u128 * 65536 * 65536) as u128;
         let g: u128 = (vec[6] as u128 * 65536) as u128;
-        let h: u128 = (vec[7] as u128);
+        let h: u128 = vec[7] as u128;
 
         return a + b + c + d + e + f + g + h;
     }
@@ -290,7 +290,7 @@ pub mod utils {
 
         }
 
-        let mut a: [u16; 8]= [res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7]];
+        let a: [u16; 8]= [res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7]];
 
         let sum: u128 = vec_to_num(a) - 1;
 

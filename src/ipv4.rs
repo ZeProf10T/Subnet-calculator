@@ -129,14 +129,13 @@ pub mod utils {
         let mut mask: u32 = 0;
         let mut n = 2_147_483_648;
 
-        for i in 0..cidr {
+        for _i in 0..cidr {
             mask += n;
             n = n / 2;
         }
 
         let res = num_to_vec(mask as u32);
         return Ipv4Addr::new(res[0],res[1],res[2],res[3]);
-        return Ipv4Addr::new(255,255,0,0);
     }
 
     pub fn vec_to_num(vec: [u8; 4]) -> u32 {
