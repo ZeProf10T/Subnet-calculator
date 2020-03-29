@@ -26,6 +26,19 @@ cargo build --release
 After that, cargo build the project on the target/realease folder.
 If you are on linux OS you can add the file create in /bin folder.
 
+## Running the tests
+
+With cargo you can make automatic test.
+
+### Unit test
+
+You can test all function, with prebuilt test. I made 2 tests for every function, one simple and one more complex.
+
+```
+cargo test
+```
+
+
 
 ## Built With
 
