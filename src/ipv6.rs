@@ -230,6 +230,21 @@ pub mod utils {
         return 128 - count;
     }
 
+    pub fn cidr_to_mask(cidr: u8) -> Ipv6Addr {
+        let mut mask: u128 = 0;
+        let mut n = 4_294_967_296 * 4_294_967_296 * 4_294_967_296 * 2_147_483_648;;
+
+        for _i in 0..cidr {
+            mask += n;
+            n = n / 2;
+        }
+
+
+        let add = num_to_vec(mask);
+        return Ipv6Addr::new(add[0],add[1], add[2], add[3],add[4], add[5], add[6], add[7]);
+    }
+
+
 
     pub fn vec_to_num(vec: [u16; 8]) -> u128 {
         let a: u128 = (vec[0] as u128 * 65536 * 65536 * 65536 * 65536 * 65536 * 65536 * 65536) as u128;
@@ -297,4 +312,16 @@ pub mod utils {
         return sum;
     }
 
+
+    pub fn valid_mask(mask: &str) -> Option<Ipv6Addr>{
+         match mask.parse::<u8>() {
+            Ok(a) => {
+                return Some(cidr_to_mask(a))
+            },
+            Err(_) => {}
+        }
+
+
+        return None;
+    }
  }

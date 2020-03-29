@@ -5,7 +5,7 @@ use std::net::Ipv6Addr;
 use clap::{Arg, App};
 
 pub mod ipv4;
-mod ipv6;
+pub mod ipv6;
 
 
 fn quatre(ip: Ipv4Addr, mask: Ipv4Addr, subnet_mask: Ipv4Addr) {
@@ -87,11 +87,15 @@ fn six(ip: Ipv6Addr, mask: Ipv6Addr, subnet_mask: Ipv6Addr) {
     let subnet_wildcard = ipv6::address::wildcard(&subnet_mask);
     let count = ipv6::subnet::count(&wildcard, &subnet_wildcard);
 
-    println!("");
+
+
+    println!();
     println!("Subnet-mask : {}", subnet_mask);
     println!("Number of sub-network : {}", count);
 
+
     let subnetworks = ipv6::subnet::calculate(&network, &mask, &subnet_mask);
+
 
 
     for subnetwork in subnetworks {
@@ -112,6 +116,7 @@ fn six(ip: Ipv6Addr, mask: Ipv6Addr, subnet_mask: Ipv6Addr) {
 
 
     println!();
+
 }
 
 
@@ -152,112 +157,95 @@ fn main() {
 
     match matches.value_of("Version") {
         Some("4") => {
-            /* Default value */
+            let ip_values = matches.value_of("IP Address").unwrap();
+            let mask_values = matches.value_of("Network mask").unwrap();
+            let subnet_mask_values = matches.value_of("Subnet mask").unwrap();
+            let mut ok = true;
 
 
-            let mut ip = Ipv4Addr::new(192,168,0,1);
-            let mut mask = Ipv4Addr::new(255,255,255,0);
-            let mut subnet_mask = Ipv4Addr::new(255,255,255,192);
+            let mut ip: Ipv4Addr= Ipv4Addr::new(192,168,10, 1);
+            let mut mask: Ipv4Addr = Ipv4Addr::new(255,255,255,0);
+            let mut subnet_mask: Ipv4Addr = Ipv4Addr::new(255,255,255,252);
 
-            match matches.value_of("IP Address") {
-                Some(a) => {
-                    match a.parse::<Ipv4Addr>() {
-                        Ok(b) => { ip = b; },
-                        Err(_) => panic!("Non-valid IPv4")
-                    }
-                },
-                None => panic!("Error")
+
+            match ip_values.parse::<Ipv4Addr>() {
+                Ok(i) => { ip = i;},
+                _ => {
+                    eprintln!("Invalid IP");
+                    ok = false;
+                }
             }
 
-            match matches.value_of("Network mask") {
-                Some(a) => {
-                    match a.parse::<u8>() {
-                        Ok(a) => {
-                            match a {
-                                1..=32 => {
-                                    let mask = ipv4::utils::cidr_to_mask(a);
-                                },
-                                _ => println!("Out of range")
-                            }
+            match ipv4::utils::valid_mask(mask_values) {
+                Some(a) => { mask = a; },
+                None => {
+                    eprintln!("Invalid Mask");
+                    ok = false;
+                }
 
-                        }
-                        _ => {
-                            match a.parse::<Ipv4Addr>() {
-                                Ok(b) => { mask = b; },
-                                Err(_) => panic!("Non-valid subnet mask")
-                            }
-                        }
-
-                    }
-
-                },
-                None => panic!("Error")
             }
 
-            match matches.value_of("Subnet mask") {
+            match ipv4::utils::valid_mask(subnet_mask_values) {
                 Some(a) => {
-                    match a.parse::<u8>() {
-                        Ok(a) => {
-                            match a {
-                                1..=32 => {
-                                    let subnet_mask = ipv4::utils::cidr_to_mask(a);
-                                },
-                                _ => println!("Out of range")
-                            }
-
-                        }
-                        _ => {
-                            match a.parse::<Ipv4Addr>() {
-                                Ok(b) => { subnet_mask = b; },
-                                Err(_) => panic!("Non-valid subnet mask")
-                            }
-                        }
-
-                    }
-
+                    subnet_mask = a;
                 },
-                None => panic!("Error")
+                None => {
+                    eprintln!("Invalid Subnet-Mask");
+                    ok = false;
+                }
             }
 
-            quatre(ip, mask, subnet_mask);
+            if ok {
+                quatre(ip, mask, subnet_mask);
+            }
+
+
+
         },
         Some("6") => {
-            /* Default value */
+            let ip_values = matches.value_of("IP Address").unwrap();
+            let mask_values = matches.value_of("Network mask").unwrap();
+            let subnet_mask_values = matches.value_of("Subnet mask").unwrap();
+            let mut ok = true;
+
+
             let mut ip = Ipv6Addr::new(0xfe80,0,0,1,0,0,0,1);
-            let mut mask = Ipv6Addr::new(0xffff,0xffff,0xffff,0,0,0,0,0);
-            let mut subnet_mask = Ipv6Addr::new(0xffff,0xffff,0xffff,0xffff,0,0,0,0);
+            let mut mask = Ipv6Addr::new(0xffff,0xffff,0xffff,0x0003,0,0,0,0);
+            let mut subnet_mask = Ipv6Addr::new(0xffff,0xffff,0xffff,0,0,0,0,0);
 
-            match matches.value_of("IP Address") {
-                Some(a) => {
-                    match a.parse::<Ipv6Addr>() {
-                        Ok(b) => { ip = b; },
-                        Err(_) => panic!("Non-valid IPv4")
-                    }
-                },
-                None => panic!("Error")
+
+            match ip_values.parse::<Ipv6Addr>() {
+                Ok(b) => { ip = b; },
+                Err(_) => {
+                    eprintln!("Invalid IPv6");
+                    ok = false;
+                }
             }
 
-            match matches.value_of("Network mask") {
-                Some(a) => {
-                    match a.parse::<Ipv6Addr>() {
-                        Ok(b) => { mask = b; },
-                        Err(_) => panic!("Non-valid network mask")
-                    }
-                },
-                None => panic!("Error")
+            match ipv6::utils::valid_mask(mask_values) {
+                Some(a) => { mask = a; },
+                None => {
+                    eprintln!("Invalid Mask");
+                    ok = false;
+                }
+
             }
 
-            match matches.value_of("Subnet mask") {
+            match ipv6::utils::valid_mask(subnet_mask_values) {
                 Some(a) => {
-                    match a.parse::<Ipv6Addr>() {
-                        Ok(b) => { subnet_mask = b; },
-                        Err(_) => panic!("Non-valid subnet mask")
-                    }
+                    subnet_mask = a;
                 },
-                None => panic!("Error")
+                None => {
+                    eprintln!("Invalid Subnet-Mask");
+                    ok = false;
+                }
             }
 
-            six(ip, mask, subnet_mask);
+            println!("{},{},{}", ip, mask, subnet_mask);
+
+            if ok {
+                six(ip, mask, subnet_mask);
+            }
         },
         _ => eprintln!("You must choose an IP version : 4 or 6")
     }

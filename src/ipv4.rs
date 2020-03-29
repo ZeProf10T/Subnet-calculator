@@ -173,5 +173,25 @@ pub mod utils {
         return sum;
     }
 
+    pub fn valid_mask(mask: &str) -> Option<Ipv4Addr>{
+        match mask.parse::<Ipv4Addr>() {
+            Ok(a) => {
+                return Some(a)
+            },
+            Err(_) => { }
+        }
+
+        match mask.parse::<u8>() {
+            Ok(a) => {
+                return Some(cidr_to_mask(a))
+            },
+            Err(_) => {}
+        }
+
+
+        return None;
+    }
+
+
 
 }
