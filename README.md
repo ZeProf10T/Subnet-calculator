@@ -28,11 +28,11 @@ If you are on linux OS you can add the file create in /bin folder.
 
 ## Running the tests
 
-With cargo you can make automatic test
+With cargo you can make automatic test.
 
 ### Unit test
 
-Explain what these tests test and why
+You can test all function, with prebuilt test. I made 2 tests for every function, one simple and one more complex.
 
 ```
 cargo test
