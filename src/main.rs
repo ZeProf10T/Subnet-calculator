@@ -1,123 +1,14 @@
 extern crate clap;
+use clap::{Arg, App};
 
 use std::net::Ipv4Addr;
 use std::net::Ipv6Addr;
-use clap::{Arg, App};
 
 pub mod ipv4;
 pub mod ipv6;
+pub mod export;
+pub mod show;
 
-
-fn quatre(ip: Ipv4Addr, mask: Ipv4Addr, subnet_mask: Ipv4Addr) {
-
-    let network = ipv4::address::network(&ip, &mask);
-    let wildcard = ipv4::address::wildcard(&mask);
-    let broadcast = ipv4::address::broadcast(&ip, &mask);
-    let cidr = ipv4::utils::mask_to_cidr(&mask);
-    let first = ipv4::address::first(&network);
-    let last = ipv4::address::last(&broadcast);
-    let hosts = ipv4::utils::host_count(&wildcard);
-
-    println!();
-
-    println!("{} /{}", ip, cidr);
-    println!("\tNetwork : {:#?}", network);
-    println!("\tBroadcast : {:#?}", broadcast);
-    println!("\tMask : {:#?}", mask);
-    println!("\tWilcard : {:#?}", wildcard);
-
-    println!("\tAvailable  : {} - {}", first, last);
-    println!("\tFree Hosts : {}", hosts);
-
-    println!();
-
-    let subnet_wildcard = ipv4::address::wildcard(&subnet_mask);
-    let subnet_count = ipv4::subnet::count(&wildcard, &subnet_wildcard);
-
-    println!("Subnet-mask : {}", subnet_mask);
-    println!("Number of sub-network : {}", subnet_count);
-
-
-    let subnetworks = ipv4::subnet::calculate(&network, &mask, &subnet_mask);
-
-    for subnetwork in subnetworks {
-
-        let cidr = ipv4::utils::mask_to_cidr(&subnet_mask);
-        let broadcast = ipv4::address::broadcast(&subnetwork, &subnet_mask);
-
-        let first = ipv4::address::first(&subnetwork);
-        let last = ipv4::address::last(&broadcast);
-
-        let hosts = ipv4::utils::host_count(&ipv4::address::wildcard(&subnet_mask));
-
-        println!();
-        println!("{} /{}", subnetwork, cidr);
-        println!("\tAvailable  : {} - {}", first, last);
-        println!("\tFree Hosts : {}", hosts);
-        println!("\tBroadcast  : {}", broadcast);
-    }
-
-
-    println!();
-}
-
-fn six(ip: Ipv6Addr, mask: Ipv6Addr, subnet_mask: Ipv6Addr) {
-
-    let network = ipv6::address::network(&ip, &mask);
-    let wildcard = ipv6::address::wildcard(&mask);
-    let broadcast = ipv6::address::broadcast(&ip, &wildcard);
-
-    let first = ipv6::address::first(&network);
-    let last = ipv6::address::last(&broadcast);
-
-    let hosts = ipv6::utils::host_count(&wildcard);
-    let cidr = ipv6::utils::mask_to_cidr(&mask);
-
-    println!();
-
-    println!("{} /{}", network, cidr);
-    println!("\tMask : {:#?}", mask);
-    println!("\tWilcard : {:#?}", wildcard);
-
-    println!("\tAvailable  : {} - {}", first, last);
-    println!("\tFree Hosts : {}", hosts);
-
-
-    /* SUBNETWORK */
-    let subnet_wildcard = ipv6::address::wildcard(&subnet_mask);
-    let count = ipv6::subnet::count(&wildcard, &subnet_wildcard);
-
-
-
-    println!();
-    println!("Subnet-mask : {}", subnet_mask);
-    println!("Number of sub-network : {}", count);
-
-
-    let subnetworks = ipv6::subnet::calculate(&network, &mask, &subnet_mask);
-
-
-
-    for subnetwork in subnetworks {
-
-        let cidr = ipv6::utils::mask_to_cidr(&subnet_mask);
-
-        let first = ipv6::address::first(&subnetwork);
-        let last = ipv6::address::last(&broadcast);
-
-        let hosts = ipv6::utils::host_count(&ipv6::address::wildcard(&subnet_mask));
-
-        println!();
-        println!("{} /{}", subnetwork, cidr);
-        println!("\tAvailable  : {} - {}", first, last);
-        println!("\tFree Hosts : {}", hosts);
-        println!("\tBroadcast  : {}", broadcast);
-    }
-
-
-    println!();
-
-}
 
 
 
@@ -150,6 +41,14 @@ fn main() {
             .takes_value(true)
             .index(4)
             .help("Subnet-Mask must be like 255.255.255.0")
+        )
+        .arg(Arg::with_name("csv")
+            .short("c")
+            .long("csv")
+            .takes_value(true)
+            .value_name("FILE")
+            .help("Create a CSV file based on subnetworks")
+
         )
         .get_matches();
 
@@ -196,7 +95,15 @@ fn main() {
             }
 
             if ok {
-                quatre(ip, mask, subnet_mask);
+                if matches.is_present("csv") {
+                    let file = matches.value_of("csv").unwrap_or("subnetwork");
+                    export::quatre(ip, mask, subnet_mask, file).unwrap_or_else(|e| eprintln!("Error in the creation of the file !,\n {}",e));;
+                }
+                else {
+                    show::quatre(ip, mask, subnet_mask);
+                }
+
+
             }
 
 
@@ -241,10 +148,17 @@ fn main() {
                 }
             }
 
-            println!("{},{},{}", ip, mask, subnet_mask);
 
             if ok {
-                six(ip, mask, subnet_mask);
+                if matches.is_present("csv") {
+                    let file = matches.value_of("csv").unwrap_or("subnetwork");
+                    export::six(ip, mask, subnet_mask, file).unwrap_or_else(|e| eprintln!("Error in the creation of the file !,\n {}",e));
+                }
+                else {
+                    show::six(ip, mask, subnet_mask);
+                }
+
+
             }
         },
         _ => eprintln!("You must choose an IP version : 4 or 6")

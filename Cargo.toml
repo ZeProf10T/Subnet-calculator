@@ -10,3 +10,4 @@ keywords = ["network","tool","cli"]
 
 [dependencies]
 clap = "*"
+csv = "*"
