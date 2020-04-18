@@ -232,7 +232,7 @@ pub mod utils {
 
     pub fn cidr_to_mask(cidr: u8) -> Ipv6Addr {
         let mut mask: u128 = 0;
-        let mut n = 4_294_967_296 * 4_294_967_296 * 4_294_967_296 * 2_147_483_648;;
+        let mut n = 4_294_967_296 * 4_294_967_296 * 4_294_967_296 * 2_147_483_648;
 
         for _i in 0..cidr {
             mask += n;

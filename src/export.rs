@@ -1,14 +1,11 @@
 extern crate csv;
 
-use std::io;
 use std::error::Error;
 use std::net::{Ipv4Addr, Ipv6Addr};
 use csv::Writer;
 
 use crate::ipv4;
 use crate::ipv6;
-use std::fmt::format;
-
 
 pub fn quatre(ip: Ipv4Addr, mask: Ipv4Addr, subnet_mask: Ipv4Addr, file: &str) -> Result<(), Box<dyn Error>> {
 
@@ -16,12 +13,12 @@ pub fn quatre(ip: Ipv4Addr, mask: Ipv4Addr, subnet_mask: Ipv4Addr, file: &str) -
     let network = ipv4::address::network(&ip, &mask);
     let wildcard = ipv4::address::wildcard(&mask);
     let broadcast = ipv4::address::broadcast(&ip, &mask);
-    let cidr = ipv4::utils::mask_to_cidr(&mask);
-    let first = ipv4::address::first(&network);
-    let last = ipv4::address::last(&broadcast);
-    let hosts = ipv4::utils::host_count(&wildcard);
+    let _cidr = ipv4::utils::mask_to_cidr(&mask);
+    let _first = ipv4::address::first(&network);
+    let _last = ipv4::address::last(&broadcast);
+    let _hosts = ipv4::utils::host_count(&wildcard);
     let subnet_wildcard = ipv4::address::wildcard(&subnet_mask);
-    let subnet_count = ipv4::subnet::count(&wildcard, &subnet_wildcard);
+    let _subnet_count = ipv4::subnet::count(&wildcard, &subnet_wildcard);
 
     /* Subnetwork computation */
     let subnetworks = ipv4::subnet::calculate(&network, &mask, &subnet_mask);
@@ -34,7 +31,7 @@ pub fn quatre(ip: Ipv4Addr, mask: Ipv4Addr, subnet_mask: Ipv4Addr, file: &str) -
     wtr.write_record(&["Network", "Mask", "Broadcast", "First", "Last", "Hosts count"])?;
 
     for subnetwork in subnetworks {
-        let cidr = ipv4::utils::mask_to_cidr(&subnet_mask);
+        let _cidr = ipv4::utils::mask_to_cidr(&subnet_mask);
         let broadcast = ipv4::address::broadcast(&subnetwork, &subnet_mask);
 
         let first = ipv4::address::first(&subnetwork);
@@ -67,7 +64,7 @@ pub fn six(ip: Ipv6Addr, mask: Ipv6Addr, subnet_mask: Ipv6Addr, file: &str) -> R
 
     /* SUBNETWORK */
     let subnet_wildcard = ipv6::address::wildcard(&subnet_mask);
-    let count = ipv6::subnet::count(&wildcard, &subnet_wildcard);
+    let _count = ipv6::subnet::count(&wildcard, &subnet_wildcard);
 
 
     let subnetworks = ipv6::subnet::calculate(&network, &mask, &subnet_mask);
