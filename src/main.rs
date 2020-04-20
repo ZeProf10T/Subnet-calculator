@@ -9,7 +9,6 @@ pub mod ipv6;
 pub mod export;
 pub mod show;
 
-
 fn main() {
     // Initiate clap application
     let yml = load_yaml!("app.yml");
