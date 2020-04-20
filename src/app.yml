@@ -6,7 +6,7 @@ author: Léo Huteau <huteau890@gmail.com>
 
 args:
   - version:
-      help: Choose between 4 and 6
+      help: Must be an IP version
       index: 1
       required: true
       takes_value: true
@@ -15,7 +15,7 @@ args:
         - "6"
 
   - address:
-      help: Must be IPv4 or IPv6
+      help: Must be a valid IP Address
       index: 2
       required: true
       takes_value: true
@@ -38,3 +38,11 @@ args:
       long: csv
       takes_value: true
       value_name: FILE
+
+  - limit:
+      help: Limit of showed subnetwork
+      short: l
+      long: limit
+      possible_values: ["2", "4", "8", "16", "32", "64", "128"]
+      takes_value: true
+      value_name: LIMIT

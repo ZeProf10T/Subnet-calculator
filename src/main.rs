@@ -10,10 +10,7 @@ pub mod export;
 pub mod show;
 
 
-
-
 fn main() {
-
     // Initiate clap application
     let yml = load_yaml!("app.yml");
     let matches = App::from(yml).get_matches();
@@ -21,6 +18,7 @@ fn main() {
 
     match matches.value_of("version") {
         Some("4") => {
+
             let ip_values = matches.value_of("address").unwrap();
             let mask_values = matches.value_of("netmask").unwrap();
             let subnet_mask_values = matches.value_of("subnetmask").unwrap();
@@ -128,10 +126,6 @@ fn main() {
         },
         _ => eprintln!("You must choose an IP version : 4 or 6")
     }
-
-
-
-
 
 }
 
