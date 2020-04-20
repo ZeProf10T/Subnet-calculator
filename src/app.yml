@@ -1,0 +1,40 @@
+name: Subnet calculator
+version: "1.0"
+about: A basic subnet calculator
+author: Léo Huteau <huteau890@gmail.com>
+
+
+args:
+  - version:
+      help: Choose between 4 and 6
+      index: 1
+      required: true
+      takes_value: true
+      possible_values:
+        - "4"
+        - "6"
+
+  - address:
+      help: Must be IPv4 or IPv6
+      index: 2
+      required: true
+      takes_value: true
+
+  - netmask:
+      help: Mask must be in in CIDR format for all or classical format for IPv4
+      index: 3
+      required: true
+      takes_value: true
+
+  - subnetmask:
+      help: Subnet mask must be in in CIDR format for all or classical format for IPv4
+      index: 4
+      required: true
+      takes_value: true
+
+  - csv:
+      help: export data as CSV file
+      short: c
+      long: csv
+      takes_value: true
+      value_name: FILE

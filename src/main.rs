@@ -1,5 +1,5 @@
 extern crate clap;
-use clap::{Arg, App};
+use clap::{load_yaml, App};
 
 use std::net::Ipv4Addr;
 use std::net::Ipv6Addr;
@@ -14,51 +14,16 @@ pub mod show;
 
 fn main() {
 
-
-    let matches = App::new("Subnet calculator")
-        .version("0.1.0")
-        .author("Léo Huteau <huteau890@gmail.com>")
-        .about("A basic subnet calculator")
-        .arg(Arg::with_name("Version")
-            .required(true)
-            .takes_value(true)
-            .index(1)
-            .help("Choose between 4 and 6")
-        )
-        .arg(Arg::with_name("IP Address")
-            .required(true)
-            .takes_value(true)
-            .index(2)
-            .help("Must be IPv4 or IPv6")
-        ).arg(Arg::with_name("Network mask")
-            .required(true)
-            .takes_value(true)
-            .index(3)
-            .help("Mask must be like 255.255.255.0 for IPv4 or  like ffff:ffff:ffff:ffff:: for IPv6")
-        )
-        .arg(Arg::with_name("Subnet mask")
-            .required(true)
-            .takes_value(true)
-            .index(4)
-            .help("Subnet-Mask must be like 255.255.255.0")
-        )
-        .arg(Arg::with_name("csv")
-            .short("c")
-            .long("csv")
-            .takes_value(true)
-            .value_name("FILE")
-            .help("Create a CSV file based on subnetworks")
-
-        )
-        .get_matches();
+    // Initiate clap application
+    let yml = load_yaml!("app.yml");
+    let matches = App::from(yml).get_matches();
 
 
-
-    match matches.value_of("Version") {
+    match matches.value_of("version") {
         Some("4") => {
-            let ip_values = matches.value_of("IP Address").unwrap();
-            let mask_values = matches.value_of("Network mask").unwrap();
-            let subnet_mask_values = matches.value_of("Subnet mask").unwrap();
+            let ip_values = matches.value_of("address").unwrap();
+            let mask_values = matches.value_of("netmask").unwrap();
+            let subnet_mask_values = matches.value_of("subnetmask").unwrap();
             let mut ok = true;
 
 
