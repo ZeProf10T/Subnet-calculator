@@ -5,30 +5,21 @@ author: Léo Huteau <huteau890@gmail.com>
 
 
 args:
-  - version:
-      help: Must be an IP version
-      index: 1
-      required: true
-      takes_value: true
-      possible_values:
-        - "4"
-        - "6"
-
   - address:
       help: Must be a valid IP Address
-      index: 2
+      index: 1
       required: true
       takes_value: true
 
   - netmask:
       help: Mask must be in in CIDR format for all or classical format for IPv4
-      index: 3
+      index: 2
       required: true
       takes_value: true
 
   - subnetmask:
       help: Subnet mask must be in in CIDR format for all or classical format for IPv4
-      index: 4
+      index: 3
       required: true
       takes_value: true
 

@@ -8,15 +8,18 @@ pub mod ipv4;
 pub mod ipv6;
 pub mod export;
 pub mod show;
+pub mod common;
 
 fn main() {
     // Initiate clap application
     let yml = load_yaml!("app.yml");
     let matches = App::from(yml).get_matches();
 
+    let address = matches.value_of("address").unwrap();
 
-    match matches.value_of("version") {
-        Some("4") => {
+
+    match common::version(address) {
+        Ok(common::Version::Four) => {
 
             let ip_values = matches.value_of("address").unwrap();
             let mask_values = matches.value_of("netmask").unwrap();
@@ -71,7 +74,7 @@ fn main() {
 
 
         },
-        Some("6") => {
+        Ok(common::Version::Six) => {
             let ip_values = matches.value_of("IP Address").unwrap();
             let mask_values = matches.value_of("Network mask").unwrap();
             let subnet_mask_values = matches.value_of("Subnet mask").unwrap();
@@ -123,7 +126,7 @@ fn main() {
 
             }
         },
-        _ => eprintln!("You must choose an IP version : 4 or 6")
+        _ => eprintln!("You must have a valid IP address")
     }
 
 }
