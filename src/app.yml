@@ -20,7 +20,7 @@ args:
   - subnetmask:
       help: Subnet mask must be in in CIDR format for all or classical format for IPv4
       index: 3
-      required: true
+      required: false
       takes_value: true
 
   - csv:
@@ -32,8 +32,9 @@ args:
 
   - limit:
       help: Limit of showed subnetwork
-      short: l
+      short: el
       long: limit
       possible_values: ["2", "4", "8", "16", "32", "64", "128"]
       takes_value: true
       value_name: LIMIT
+
