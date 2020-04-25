@@ -75,9 +75,9 @@ fn main() {
 
         },
         Ok(common::Version::Six) => {
-            let ip_values = matches.value_of("IP Address").unwrap();
-            let mask_values = matches.value_of("Network mask").unwrap();
-            let subnet_mask_values = matches.value_of("Subnet mask").unwrap();
+            let ip_values = matches.value_of("address").unwrap();
+            let mask_values = matches.value_of("netmask").unwrap();
+            let subnet_mask_values = matches.value_of("subnetmask").unwrap();
             let mut ok = true;
 
 
