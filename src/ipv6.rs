@@ -66,18 +66,21 @@ pub mod address {
         return Ipv6Addr::new(res[0], res[1], res[2], res[3], res[4], res[5], res[6], last_octet);
     }
 
-    /* This function have no sense with IPV6 */
-    pub fn broadcast(ip: &Ipv6Addr, wildcard: &Ipv6Addr) -> Ipv6Addr {
+    /* !!! Ne fonctionne pas */
+    pub fn broadcast(ip: &Ipv6Addr, mask: &Ipv6Addr) -> Ipv6Addr {
+
         let mut broadcast: Vec<u16> = Vec::new();
 
         let ip = ip.octets();
-        let wildcard = wildcard.octets();
+        let wildcard = wildcard(mask).octets();
 
         for i in 0..16 {
             // Logical NOT in MASK
             if i % 2 == 0 {
                 let a: u16 = (ip[i] | wildcard[i]) as u16;
                 let b: u16 = (ip[i + 1] | wildcard[i + 1]) as u16;
+
+
                 broadcast.push(a * 256 + b);
             }
 
@@ -98,7 +101,10 @@ pub mod address {
                 res.push(a * 256 + b);
             }
         }
+
+        /* Erreur dans certains cas ici */
         let last_octet = res[7] - 1;
+
 
         return Ipv6Addr::new(res[0], res[1], res[2],res[3], res[4], res[5], res[6],last_octet);
     }

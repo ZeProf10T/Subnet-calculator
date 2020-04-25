@@ -183,7 +183,10 @@ pub mod utils {
 
         match mask.parse::<u8>() {
             Ok(a) => {
-                return Some(cidr_to_mask(a))
+                if a > 0 && a < 31 {
+                    return Some(cidr_to_mask(a))
+                }
+
             },
             Err(_) => {}
         }
