@@ -94,7 +94,7 @@ pub mod subnet {
 
         let mut subnet = Vec::new();
 
-        for _ in 0..(2 ** &ecart) {
+        for _ in 0..(2_i16.pow(ecart.into())) {
             let address = utils::num_to_vec(sub_network);
 
             subnet.push(Ipv4Addr::new(address[0],address[1],address[2],address[3]));

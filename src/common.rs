@@ -4,13 +4,15 @@ use csv::Writer;
 use std::error::Error;
 
 
-
+const DEFAULT_IPV6_LIMIT: u128 = 8;
+const DEFAULT_IPV4_LIMIT: u32 = 8;
 
 pub fn four(ip: Ipv4Addr, mask: Ipv4Addr, subnet_mask: Option<Ipv4Addr>, export: Option<&str>, limit: Option<u32>) -> Result<(), Box<dyn Error>> {
 
     /*
     ** NETWORK INFORMATION
     */
+
 
     /* COMPUTING network */
     let network = ipv4::address::network(&ip, &mask);
@@ -39,11 +41,17 @@ pub fn four(ip: Ipv4Addr, mask: Ipv4Addr, subnet_mask: Option<Ipv4Addr>, export:
 
     if subnet_mask.is_some() {
 
+        if ipv4::utils::mask_to_cidr(&subnet_mask.unwrap()) <= cidr {
+            panic!("Subnetmask must be inferior to mask")
+        };
+
         /* COMPUTING subnet */
         let subnet_mask = subnet_mask.unwrap();
         let subnet_wildcard = ipv4::address::wildcard(&subnet_mask);
         let subnet_count = ipv4::subnet::count(&wildcard, &subnet_wildcard);
         let subnetworks = ipv4::subnet::calculate(&network, &mask, &subnet_mask);
+
+
 
         /* SHOW subnet information */
         println!("Subnet-mask : {}", subnet_mask);
@@ -79,22 +87,69 @@ pub fn four(ip: Ipv4Addr, mask: Ipv4Addr, subnet_mask: Option<Ipv4Addr>, export:
 
 
         } else {
-            for subnetwork in subnetworks {
+            let mut limit: u32 = match limit.is_some() {
+                false => DEFAULT_IPV4_LIMIT,
+                true => limit.unwrap()
+            };
 
-                /* COMPUTING */
-                let cidr = ipv4::utils::mask_to_cidr(&subnet_mask);
-                let broadcast = ipv4::address::broadcast(&subnetwork, &subnet_mask);
-                let first = ipv4::address::first(&subnetwork);
-                let last = ipv4::address::last(&broadcast);
-                let hosts = ipv4::utils::host_count(&ipv4::address::wildcard(&subnet_mask));
+            if limit < subnet_count {
 
-                /* SHOW */
-                println!();
-                println!("{} /{}", subnetwork, cidr);
-                println!("\tAvailable  : {} - {}", first, last);
-                println!("\tFree Hosts : {}", hosts);
-                println!("\tBroadcast  : {}", broadcast);
+                let left_range = &subnetworks[0_usize .. (limit / 2) as usize];
+                let right_range = &subnetworks[(subnet_count - limit / 2) as usize ..= (subnet_count - 1) as usize];
 
+
+                for subnetwork in left_range {
+
+                    let cidr = ipv4::utils::mask_to_cidr(&subnet_mask);
+                    let broadcast = ipv4::address::broadcast(&subnetwork, &subnet_mask);
+                    let first = ipv4::address::first(&subnetwork);
+                    let last = ipv4::address::last(&broadcast);
+                    let hosts = ipv4::utils::host_count(&ipv4::address::wildcard(&subnet_mask));
+
+                    /* SHOW */
+                    println!();
+                    println!("{} /{}", subnetwork, cidr);
+                    println!("\tAvailable  : {} - {}", first, last);
+                    println!("\tFree Hosts : {}", hosts);
+                    println!("\tBroadcast  : {}", broadcast);
+
+                }
+
+                println!("\n......................................\n");
+
+                for subnetwork in right_range {
+
+                    let cidr = ipv4::utils::mask_to_cidr(&subnet_mask);
+                    let broadcast = ipv4::address::broadcast(&subnetwork, &subnet_mask);
+                    let first = ipv4::address::first(&subnetwork);
+                    let last = ipv4::address::last(&broadcast);
+                    let hosts = ipv4::utils::host_count(&ipv4::address::wildcard(&subnet_mask));
+
+                    /* SHOW */
+                    println!();
+                    println!("{} /{}", subnetwork, cidr);
+                    println!("\tAvailable  : {} - {}", first, last);
+                    println!("\tFree Hosts : {}", hosts);
+                    println!("\tBroadcast  : {}", broadcast);
+
+                }
+            } else {
+                for subnetwork in subnetworks {
+
+                    let cidr = ipv4::utils::mask_to_cidr(&subnet_mask);
+                    let broadcast = ipv4::address::broadcast(&subnetwork, &subnet_mask);
+                    let first = ipv4::address::first(&subnetwork);
+                    let last = ipv4::address::last(&broadcast);
+                    let hosts = ipv4::utils::host_count(&ipv4::address::wildcard(&subnet_mask));
+
+                    /* SHOW */
+                    println!();
+                    println!("{} /{}", subnetwork, cidr);
+                    println!("\tAvailable  : {} - {}", first, last);
+                    println!("\tFree Hosts : {}", hosts);
+                    println!("\tBroadcast  : {}", broadcast);
+
+                }
             }
         }
 
@@ -138,6 +193,10 @@ pub fn six(ip: Ipv6Addr, mask: Ipv6Addr, subnet_mask: Option<Ipv6Addr>, export: 
 
     if subnet_mask.is_some() {
 
+        if ipv6::utils::mask_to_cidr(&subnet_mask.unwrap()) <= cidr {
+            panic!("Subnetmask must be inferior to mask")
+        };
+
         /* COMPUTING subnet */
         let subnet_mask = subnet_mask.unwrap();
         let subnet_wildcard = ipv6::address::wildcard(&subnet_mask);
@@ -158,7 +217,7 @@ pub fn six(ip: Ipv6Addr, mask: Ipv6Addr, subnet_mask: Option<Ipv6Addr>, export: 
             wtr.write_record(&["Network", "CIDR", "Broadcast", "First", "Last", "Hosts count"])?;
 
 
-            for subnetwork in subnetworks {
+           for subnetwork in subnetworks {
 
                 /* COMPUTING */
                 let subnet_cidr = ipv6::utils::mask_to_cidr(&subnet_mask);
@@ -169,7 +228,6 @@ pub fn six(ip: Ipv6Addr, mask: Ipv6Addr, subnet_mask: Option<Ipv6Addr>, export: 
                 /* ADD line to csv file */
                 wtr.serialize((subnetwork,subnet_cidr, broadcast, first, last, hosts))?;
 
-
             }
 
 
@@ -179,26 +237,74 @@ pub fn six(ip: Ipv6Addr, mask: Ipv6Addr, subnet_mask: Option<Ipv6Addr>, export: 
 
 
         } else {
-            for subnetwork in subnetworks {
 
-                /* COMPUTING */
-                let cidr = ipv6::utils::mask_to_cidr(&subnet_mask);
-                let broadcast = ipv6::address::broadcast(&subnetwork, &subnet_mask);
-                let first = ipv6::address::first(&subnetwork);
-                let last = ipv6::address::last(&broadcast);
-                let hosts = ipv6::utils::host_count(&ipv6::address::wildcard(&subnet_mask));
+            let mut limit: u128 = match limit.is_some() {
+                false => DEFAULT_IPV6_LIMIT,
+                true => limit.unwrap().into()
+            };
 
-                /* SHOW */
-                println!();
-                println!("{} /{}", subnetwork, cidr);
-                println!("\tAvailable  : {} - {}", first, last);
-                println!("\tFree Hosts : {}", hosts);
-                println!("\tBroadcast  : {}", broadcast);
+            if limit < subnet_count {
 
+                let left_range = &subnetworks[0_usize .. (limit / 2) as usize];
+                let right_range = &subnetworks[(subnet_count - limit / 2) as usize ..= (subnet_count - 1) as usize];
+
+
+                for subnetwork in left_range {
+
+                    let cidr = ipv6::utils::mask_to_cidr(&subnet_mask);
+                    let broadcast = ipv6::address::broadcast(&subnetwork, &subnet_mask);
+                    let first = ipv6::address::first(&subnetwork);
+                    let last = ipv6::address::last(&broadcast);
+                    let hosts = ipv6::utils::host_count(&ipv6::address::wildcard(&subnet_mask));
+
+                    /* SHOW */
+                    println!();
+                    println!("{} /{}", subnetwork, cidr);
+                    println!("\tAvailable  : {} - {}", first, last);
+                    println!("\tFree Hosts : {}", hosts);
+                    println!("\tBroadcast  : {}", broadcast);
+
+                }
+
+                println!("\n......................................\n");
+
+                for subnetwork in right_range {
+
+                    let cidr = ipv6::utils::mask_to_cidr(&subnet_mask);
+                    let broadcast = ipv6::address::broadcast(&subnetwork, &subnet_mask);
+                    let first = ipv6::address::first(&subnetwork);
+                    let last = ipv6::address::last(&broadcast);
+                    let hosts = ipv6::utils::host_count(&ipv6::address::wildcard(&subnet_mask));
+
+                    /* SHOW */
+                    println!();
+                    println!("{} /{}", subnetwork, cidr);
+                    println!("\tAvailable  : {} - {}", first, last);
+                    println!("\tFree Hosts : {}", hosts);
+                    println!("\tBroadcast  : {}", broadcast);
+
+                }
+            } else {
+                for subnetwork in subnetworks {
+
+                    let cidr = ipv6::utils::mask_to_cidr(&subnet_mask);
+                    let broadcast = ipv6::address::broadcast(&subnetwork, &subnet_mask);
+                    let first = ipv6::address::first(&subnetwork);
+                    let last = ipv6::address::last(&broadcast);
+                    let hosts = ipv6::utils::host_count(&ipv6::address::wildcard(&subnet_mask));
+
+                    /* SHOW */
+                    println!();
+                    println!("{} /{}", subnetwork, cidr);
+                    println!("\tAvailable  : {} - {}", first, last);
+                    println!("\tFree Hosts : {}", hosts);
+                    println!("\tBroadcast  : {}", broadcast);
+
+                }
             }
+
+
         }
-
-
     }
 
     Ok(())

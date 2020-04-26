@@ -174,11 +174,13 @@ pub mod subnet {
 
         let x: [u16; 8]= [res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7]];
 
+
         let mut sub_network = utils::vec_to_num(x);
 
 
         let cidr = utils::mask_to_cidr(mask);
         let subnet_cidr = utils::mask_to_cidr(subnet_mask);
+
 
         let ecart = subnet_cidr - cidr;
         let pas = 2_u128.pow((128 - subnet_cidr).into());
@@ -186,7 +188,8 @@ pub mod subnet {
 
         let mut subnet = Vec::new();
 
-        for _ in 0..(2 ** &ecart) {
+
+        for _ in 0..(2_i16.pow( ecart.into() )) {
             let address = utils::num_to_vec(sub_network);
 
             subnet.push(Ipv6Addr::new(address[0],address[1],address[2],address[3], address[4], address[5], address[6], address[7]));

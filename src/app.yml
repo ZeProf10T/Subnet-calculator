@@ -32,9 +32,9 @@ args:
 
   - limit:
       help: Limit of showed subnetwork
-      short: el
+      short: l
       long: limit
-      possible_values: ["2", "4", "8", "16", "32", "64", "128"]
+      possible_values: [ "4", "8", "16", "32", "64", "128", "256"]
       takes_value: true
       value_name: LIMIT
 
