@@ -7,7 +7,7 @@ edition = "2018"
 repository = "https://github.com/ZeProf10T/Subnet-calculator"
 homepage = "https://github.com/ZeProf10T/Subnet-calculator"
 license-file = "https://github.com/ZeProf10T/Subnet-calculator/blob/master/LICENSE.md"
-readme = "http://github.com/ZeProf10T/Subnet-calculator/blob/master/README.md"
+readme = "https://github.com/ZeProf10T/Subnet-calculator/blob/master/README.md"
 keywords = ["network","tool","cli"]
 categories = ["command-line-utilities"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
