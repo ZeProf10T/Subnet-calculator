@@ -1,11 +1,15 @@
 [package]
 name = "subnet-calculator"
 description = "A CLI tool to simply and fastly calculate subnetwork."
-version = "1.0.0"
+version = "1.1.0"
 authors = ["Léo Huteau <huteau890@gmail.com>"]
 edition = "2018"
 repository = "https://github.com/ZeProf10T/Subnet-calculator"
+homepage = "https://github.com/ZeProf10T/Subnet-calculator"
+license-file = "https://github.com/ZeProf10T/Subnet-calculator/blob/master/LICENSE.md"
+readme = "http://github.com/ZeProf10T/Subnet-calculator/blob/master/README.md"
 keywords = ["network","tool","cli"]
+categories = ["command-line-utilities"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
